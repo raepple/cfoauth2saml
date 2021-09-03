@@ -1,0 +1,19 @@
+{
+    "xsappname" : "scpsaml",
+    "tenant-mode": "shared",
+    "scopes": [{
+        "name": "$XSAPPNAME.Display",
+        "description": "Display Application Scope"
+    }],
+    "attributes" : [ { 
+        "name" : "IDPEmail", 
+        "description" : "E-Mail managed in IAS", 
+        "valueType" : "string" 
+    }],       
+    "role-templates": [{
+        "name": "AppUser",
+        "description" : "App User Role Template",
+        "scope-references": ["$XSAPPNAME.Display"],
+        "attribute-references" : ["IDPEmail"] 
+    }]
+}

@@ -1,0 +1,34 @@
+---
+applications:
+
+- name: approuter
+  routes:
+    - route: approuter-a8885066trial.cfapps.eu10.hana.ondemand.com
+  path: approuter
+  memory: 128M
+  buildpacks:
+    - nodejs_buildpack
+  env:
+    SET_LOGGING_LEVEL: '{ROOT: TRACE}'
+    TENANT_HOST_PATTERN: 'approuter-(.*).cfapps.eu10.hana.ondemand.com'
+    destinations: '[{"name":"app-destination", "url":"https://sapcorpsearch.cfapps.eu10.hana.ondemand.com", "forwardAuthToken": true}]'
+  services:
+    - sapcorpsearch-xsuaa
+
+- name: sapcorpsearch
+  routes:
+    - route: sapcorpsearch.cfapps.eu10.hana.ondemand.com
+  memory: 2048M
+  timeout: 300
+  random-route: true
+  path: application/target/sapcorpsearch-application.war
+  buildpacks:
+    - sap_java_buildpack
+  env:
+    TARGET_RUNTIME: tomee7
+    SET_LOGGING_LEVEL: '{ROOT: TRACE}'
+    JBP_CONFIG_SAPJVM_MEMORY_SIZES: 'metaspace:128m..'
+    JAVA_OPTS: '-agentlib:jdwp=transport=dt_socket,address=8686,server=y,suspend=n'
+  services:
+    - sapcorpsearch-dest
+    - sapcorpsearch-xsuaa
